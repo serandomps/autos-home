@@ -2,63 +2,41 @@ var dust = require('dust')();
 var serand = require('serand');
 var utils = require('utils');
 
-dust.loadSource(dust.compile(require('./template'), 'autos-signin'));
+require('gallery');
+
+dust.loadSource(dust.compile(require('./template'), 'autos-home'));
 
 module.exports = function (sandbox, fn, options) {
-    dust.render('autos-signin', {}, function (err, out) {
-        if (err) {
-            return;
-        }
+    var ads = {
+      photos: [
+          {url: 'https://d1vda6a1j3uyzl.cloudfront.net/images/800x450/cc1a7057-cbac-4f1d-9eb2-6c92a8ebb012'},
+          {url: 'https://d1vda6a1j3uyzl.cloudfront.net/images/800x450/c8c0e590-f49b-4283-9de0-7f91d9bc5197'}
+      ]
+    };
+    dust.render('autos-home', ads, function (err, out) {
         sandbox.append(out);
-        sandbox.on('click', '.autos-signin .signin', function (e) {
-            var el = $('.autos-signin', sandbox);
-            var username = $('.username', el).val();
-            var password = $('.password', el).val();
-            authenticate(username, password, options);
-            return false;
-        });
-        sandbox.on('click', '.autos-signin .facebook', function (e) {
-            options.type = 'facebook';
-            serand.emit('user', 'oauth', options);
-            return false;
-        });
-        fn(false, function () {
-            $('.autos-signin', sandbox).remove();
-        });
-    });
-};
-
-var authenticate = function (username, password, options) {
-    $.ajax({
-        method: 'POST',
-        url: utils.resolve('accounts://apis/v/tokens'),
-        data: {
-            client_id: options.clientId,
-            grant_type: 'password',
-            username: username,
-            password: password
-        },
-        contentType: 'application/x-www-form-urlencoded',
-        dataType: 'json',
-        success: function (token) {
-            var user = {
-                tid: token.id,
-                username: username,
-                access: token.access_token,
-                refresh: token.refresh_token,
-                expires: token.expires_in
-            };
-            serand.emit('token', 'info', user.tid, user.access, function (err, token) {
-                if (err) {
-                    serand.emit('user', 'login error');
-                    return;
-                }
-                user.has = token.has;
-                serand.emit('user', 'logged in', user, options);
-            });
-        },
-        error: function () {
-            serand.emit('user', 'login error');
+        if (!fn) {
+            return fn(true, serand.none);
         }
+        fn(false, {
+            clean: function () {
+                $('.autos-home', sandbox).remove();
+            },
+            done: function () {
+                var i;
+                var o = [];
+                var photos = ads.photos;
+                var length = photos.length;
+                var photo;
+                for (i = 0; i < length; i++) {
+                    photo = photos[i];
+                    o.push(photo.url);
+                }
+                blueimp.Gallery(o, {
+                    container: $('.blueimp-gallery-carousel', sandbox),
+                    carousel: true
+                });
+            }
+        });
     });
 };
