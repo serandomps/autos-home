@@ -30,11 +30,14 @@ module.exports = function (sandbox, fn, options) {
                 var photo;
                 for (i = 0; i < length; i++) {
                     photo = photos[i];
-                    o.push(photo.url);
+                    o.push({
+                        href: photo.url
+                    });
                 }
                 blueimp.Gallery(o, {
                     container: $('.blueimp-gallery-carousel', sandbox),
-                    carousel: true
+                    carousel: true,
+                    stretchImages: true
                 });
             }
         });

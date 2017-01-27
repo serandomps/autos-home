@@ -1,6 +1,6 @@
 {
-    "name": "autos-signin",
-    "description": "autos-signin component",
+    "name": "autos-home",
+    "description": "autos-home component",
     "local": [],
     "scripts": ["index.js"],
     "styles": ["styles.css"],
