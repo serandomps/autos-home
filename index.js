@@ -6,7 +6,7 @@ require('gallery');
 
 dust.loadSource(dust.compile(require('./template'), 'autos-home'));
 
-module.exports = function (sandbox, fn, options) {
+module.exports = function (sandbox, options, done) {
     var ads = {
       photos: [
           {url: 'https://d1vda6a1j3uyzl.cloudfront.net/images/800x450/53699c34-67c1-4f69-957a-6706ddc4d2fc'},
@@ -16,15 +16,15 @@ module.exports = function (sandbox, fn, options) {
       ]
     };
     dust.render('autos-home', ads, function (err, out) {
-        sandbox.append(out);
-        if (!fn) {
-            return fn(true, serand.none);
+        if (err) {
+            return done(err);
         }
-        fn(false, {
+        sandbox.append(out);
+        done(null, {
             clean: function () {
                 $('.autos-home', sandbox).remove();
             },
-            done: function () {
+            ready: function () {
                 var i;
                 var o = [];
                 var photos = ads.photos;
