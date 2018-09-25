@@ -6,7 +6,7 @@ require('gallery');
 
 dust.loadSource(dust.compile(require('./template'), 'autos-home'));
 
-module.exports = function (sandbox, options, done) {
+module.exports = function (ctx, sandbox, options, done) {
     var ads = {
       photos: [
           {url: 'https://d1vda6a1j3uyzl.cloudfront.net/images/800x450/53699c34-67c1-4f69-957a-6706ddc4d2fc'},
